@@ -4,23 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:padding="@dimen/activity_vertical_margin">
 
-    <TextView
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"/>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin">
+
+        <TextView
         android:id="@+id/miwok_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingLeft="16dp"
         tools:text="lutti"/>
 
-    <TextView
+        <TextView
         android:id="@+id/default_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingBottom="16dp"
         tools:text="one"/>
+    </LinearLayout>
+
 
 
 </LinearLayout>
