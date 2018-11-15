@@ -24,7 +24,6 @@ public class ColorsActivity extends AppCompatActivity {
 
         String colorStr = "#" + Integer.toHexString(ContextCompat.getColor(this,R.color.category_colors_dark));
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);

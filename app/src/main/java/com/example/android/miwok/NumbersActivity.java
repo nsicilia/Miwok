@@ -15,8 +15,6 @@ import java.util.ArrayList;
 
 public class NumbersActivity extends AppCompatActivity {
 
-    private static final String TAG = "ham";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

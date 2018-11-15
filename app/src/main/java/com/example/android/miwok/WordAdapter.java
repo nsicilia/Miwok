@@ -3,6 +3,7 @@ package com.example.android.miwok;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ public class WordAdapter extends ArrayAdapter<Word>{
     WordAdapter(@NonNull Context context, ArrayList<Word> words) {
         super(context,0, words);
     }
-
     /**
      * Provides a view from and AdapterView(ListView,GridView, etc)
      *
@@ -51,10 +51,10 @@ public class WordAdapter extends ArrayAdapter<Word>{
 
 
         //Find the TextView in the list_item.xml layout with the ID default_text_view.
-        TextView numberTextView = (TextView) listItemView.findViewById(R.id.default_text_view);
+        TextView defaultTextView = (TextView) listItemView.findViewById(R.id.default_text_view);
         //Get the default translation from the currentWord object and set
         // this text on the default TextVew
-        numberTextView.setText(word.getmDefaultTranslation());
+        defaultTextView.setText(word.getmDefaultTranslation());
 
 
         ImageView miwokImageView = (ImageView) listItemView.findViewById(R.id.miwok_image_view);
