@@ -21,7 +21,8 @@ public class Word {
     //Resource Id for the relate image
     private int mImageResourceId = NO_IMAGE;
 
-
+    //Resouce name of the related audio
+    private String mAudioResourceName;
 
 
 
@@ -41,15 +42,33 @@ public class Word {
      * Creates a new Word object.
      * @param DefaultTranslation is the word in a language the user's phone is set to
      * @param MiwokTranslation is the word in Miwok
-     * @param ImageResource is the drawable image resource id of the related image
+     * @param AudioResourceName takes the name of the individual audio files
      */
-    public Word ( String DefaultTranslation, String MiwokTranslation,int ImageResource){
+    public Word ( String DefaultTranslation, String MiwokTranslation,String AudioResourceName){
 
-        mImageResourceId = ImageResource;
+        mAudioResourceName = AudioResourceName;
         mDefaultTranslation = DefaultTranslation;
         mMiwokTranslation = MiwokTranslation;
 
     }
+
+    /**
+     * Creates a new Word object.
+     * @param DefaultTranslation is the word in a language the user's phone is set to
+     * @param MiwokTranslation is the word in Miwok
+     * @param ImageResource is the drawable image resource id of the related image
+     * @param AudioResourceName takes the name of the individual audio files
+     */
+    public Word ( String DefaultTranslation, String MiwokTranslation,int ImageResource, String AudioResourceName){
+
+        mImageResourceId = ImageResource;
+        mDefaultTranslation = DefaultTranslation;
+        mMiwokTranslation = MiwokTranslation;
+        mAudioResourceName = AudioResourceName;
+
+    }
+
+
 
     /**
      * Get the default translation of the word.
@@ -84,6 +103,13 @@ public class Word {
     public boolean hasImage(){
         return mImageResourceId != -1;
     }
+
+
+    /**
+     * Get the image related to the words.
+     * @return Integer miwok image resource id
+     */
+    public String getmAudioResourceName() { return mAudioResourceName; }
 }
 
 
