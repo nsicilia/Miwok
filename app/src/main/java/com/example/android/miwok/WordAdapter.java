@@ -21,6 +21,15 @@ import java.util.ArrayList;
 
 public class WordAdapter extends ArrayAdapter<Word>{
 
+    private MediaPlayer mMediaPlayer;
+
+    private MediaPlayer.OnCompletionListener mCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            releaseMediaPlayer(mMediaPlayer);
+        }
+    };
+
     WordAdapter(@NonNull Context context, ArrayList<Word> words) {
         super(context,0, words);
     }
@@ -73,20 +82,15 @@ public class WordAdapter extends ArrayAdapter<Word>{
             miwokImageView.setImageResource(word.getmImageResourceId());
 
 
-        miwokImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                MediaPlayer mediaPlayer = MediaPlayer.create(getContext(),R.raw.number_five);
-                mediaPlayer.start();
-
-            }
-        });
 
         //Makes each list item clickable and plays the items audio
         listItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Release the media player if it currently exists because we are about to play
+                //a new audio file
+                releaseMediaPlayer(mMediaPlayer);
+
                //Gets the audio name from the word object
                String temp = word.getmAudioResourceName();
 
@@ -97,13 +101,39 @@ public class WordAdapter extends ArrayAdapter<Word>{
                 int soundId = res.getIdentifier(temp,"raw", getContext().getPackageName());
 
                 //playes the audio file using soundId
-                MediaPlayer mediaPlayer = MediaPlayer.create(getContext(),soundId);
-                mediaPlayer.start();
+                mMediaPlayer = MediaPlayer.create(getContext(),soundId);
+                //plays audio
+                mMediaPlayer.start();
+
+                //Setup a listener on the media player so we can stop and
+                //release the media player once the sound has finished playing
+                mMediaPlayer.setOnCompletionListener(mCompletionListener);
             }
         });
+
+
 
         // Return the whole list item layout (containing 2 TextViews and ImageView)
         // so that it can be shown in the ListView
         return listItemView;
     }
+
+    /**
+     * Clean up the media player by releasing its resources.
+     */
+    private void releaseMediaPlayer(MediaPlayer mMediaPlayer) {
+        // If the media player is not null, then it may be currently playing a sound.
+        if (mMediaPlayer != null) {
+            // Regardless of the current state of the media player, release its resources
+            // because we no longer need it.
+            mMediaPlayer.release();
+
+            // Set the media player back to null. For our code, we've decided that
+            // setting the media player to null is an easy way to tell that the media player
+            // is not configured to play an audio file at the moment.
+            mMediaPlayer = null;
+        }
+    }
+
+
 }

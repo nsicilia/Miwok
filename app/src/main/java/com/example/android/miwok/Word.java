@@ -1,6 +1,7 @@
 package com.example.android.miwok;
 
 import android.content.Context;
+import android.widget.Toast;
 
 /**
  * {@link Word} represents a vocabulary word that the user wants to learn.
