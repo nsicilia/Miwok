@@ -1,32 +1,56 @@
 package com.example.android.miwok;
 
-import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class WordAdapter extends ArrayAdapter<Word>{
 
+
+
+
     private MediaPlayer mMediaPlayer;
+
+    //Create Audio Manager and Context for services
+    private AudioManager mAudioManager;
+
+
+    AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        public void onAudioFocusChange(int focusChange) {
+            if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
+                    focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK){
+                //Pause playback
+                mMediaPlayer.pause();
+                //Play from beginning
+                mMediaPlayer.seekTo(0);
+        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+            // Resume playback
+                mMediaPlayer.start();
+        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+            // Stop playback and release resources
+                releaseMediaPlayer();
+
+            }
+        }
+    };
+
+
 
     private MediaPlayer.OnCompletionListener mCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            releaseMediaPlayer(mMediaPlayer);
+            releaseMediaPlayer();
         }
     };
 
@@ -77,11 +101,14 @@ public class WordAdapter extends ArrayAdapter<Word>{
         if (word.hasImage() == false){
             // Hide the ImageView(set visibility to GONE)
             miwokImageView.setVisibility(View.GONE);
-        }else
+        }else {
             //Set the ImageView to the image resource specified in word
             miwokImageView.setImageResource(word.getmImageResourceId());
+        }
 
 
+
+        mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
 
         //Makes each list item clickable and plays the items audio
         listItemView.setOnClickListener(new View.OnClickListener() {
@@ -89,25 +116,35 @@ public class WordAdapter extends ArrayAdapter<Word>{
             public void onClick(View v) {
                 //Release the media player if it currently exists because we are about to play
                 //a new audio file
-                releaseMediaPlayer(mMediaPlayer);
+                releaseMediaPlayer();
 
-               //Gets the audio name from the word object
-               String temp = word.getmAudioResourceName();
+                // Request audio focus for playback
+                int result = mAudioManager.requestAudioFocus(afChangeListener,
+                        // Use the music stream.
+                        AudioManager.STREAM_MUSIC,
+                        // Request permanent focus.
+                        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
-               //Creates a resource object
-                Resources res = getContext().getResources();
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    // We have audio focus now
 
-                //Takes name of the file and gets its int id
-                int soundId = res.getIdentifier(temp,"raw", getContext().getPackageName());
+                    //Gets the audio name from the word object
+                    String temp = word.getmAudioResourceName();
+                    //Creates a resource object
+                    Resources res = getContext().getResources();
+                    //Takes name of the file and gets its int id
+                    int soundId = res.getIdentifier(temp, "raw", getContext().getPackageName());
 
-                //playes the audio file using soundId
-                mMediaPlayer = MediaPlayer.create(getContext(),soundId);
-                //plays audio
-                mMediaPlayer.start();
+                    //playes the audio file using soundId
+                    mMediaPlayer = MediaPlayer.create(getContext(), soundId);
+                    //plays audio
+                    mMediaPlayer.start();
 
-                //Setup a listener on the media player so we can stop and
-                //release the media player once the sound has finished playing
-                mMediaPlayer.setOnCompletionListener(mCompletionListener);
+                    //Setup a listener on the media player so we can stop and
+                    //release the media player once the sound has finished playing
+                    mMediaPlayer.setOnCompletionListener(mCompletionListener);
+
+                }
             }
         });
 
@@ -118,22 +155,22 @@ public class WordAdapter extends ArrayAdapter<Word>{
         return listItemView;
     }
 
+
     /**
      * Clean up the media player by releasing its resources.
      */
-    private void releaseMediaPlayer(MediaPlayer mMediaPlayer) {
+    public void releaseMediaPlayer() {
         // If the media player is not null, then it may be currently playing a sound.
         if (mMediaPlayer != null) {
             // Regardless of the current state of the media player, release its resources
             // because we no longer need it.
             mMediaPlayer.release();
 
-            // Set the media player back to null. For our code, we've decided that
-            // setting the media player to null is an easy way to tell that the media player
-            // is not configured to play an audio file at the moment.
-            mMediaPlayer = null;
+            mAudioManager.abandonAudioFocus(afChangeListener);
         }
     }
+
+
 
 
 }

@@ -53,6 +53,8 @@ public class PhrasesActivity extends AppCompatActivity {
 
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
